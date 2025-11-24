@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const newsRoutes = require('./routes/news');
 
 dotenv.config();
 
@@ -68,5 +69,6 @@ app.use((err, req, res, next) => {
     error: err.message 
   });
 });
+app.use('/api/news', newsRoutes);
 // Export for testing
 module.exports = app;
