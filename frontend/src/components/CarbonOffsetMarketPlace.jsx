@@ -17,7 +17,7 @@ const CarbonOffsetMarketplace = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/offset/projects');
+      const response = await axios.get('/${process.env.REACT_APP_API_URL || 'http://localhost:5000'}api/offset/projects');
       if (response.data.success) {
         setProjects(response.data.data);
       }
@@ -31,7 +31,7 @@ const CarbonOffsetMarketplace = () => {
   const fetchUserFootprint = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/offset/calculate', {
+      const response = await axios.get('${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/offset/calculate', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -48,7 +48,7 @@ const CarbonOffsetMarketplace = () => {
       const token = localStorage.getItem('token');
       
       const response = await axios.post(
-        'http://localhost:5000/api/offset/purchase',
+        '${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/offset/purchase',
         { projectId, tonsOffset: parseFloat(tonsToOffset) },
         { headers: { Authorization: `Bearer ${token}` } }
       );

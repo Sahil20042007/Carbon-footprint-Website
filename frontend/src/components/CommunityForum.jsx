@@ -20,7 +20,7 @@ const CommunityForum = () => {
     try {
       setLoading(true);
       const params = selectedCategory !== 'All' ? `?category=${selectedCategory}` : '';
-      const response = await axios.get(`http://localhost:5000/api/comments${params}`);
+      const response = await axios.get(`/${process.env.REACT_APP_API_URL || 'http://localhost:5000'}api/comments${params}`);
       
       if (response.data.success) {
         setComments(response.data.data);
@@ -40,7 +40,7 @@ const CommunityForum = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/api/comments',
+        '${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/comments',
         {
           content: newComment,
           category: selectedCategory === 'All' ? 'General' : selectedCategory
@@ -62,7 +62,7 @@ const CommunityForum = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `http://localhost:5000/api/comments/${commentId}/like`,
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/comments/${commentId}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -83,7 +83,7 @@ const CommunityForum = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        `http://localhost:5000/api/comments/${commentId}/reply`,
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/comments/${commentId}/reply`,
         { content: replyContent },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -107,7 +107,7 @@ const CommunityForum = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.delete(
-        `http://localhost:5000/api/comments/${commentId}`,
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/comments/${commentId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

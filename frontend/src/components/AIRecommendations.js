@@ -16,7 +16,7 @@ const AIRecommendations = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/recommendations', {
+      const response = await axios.get('${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/recommendations', {
         headers: { Authorization: `Bearer ${token}` }
       });
 

@@ -15,7 +15,7 @@ const CarbonNews = () => {
   setLoading(true);
   try {
     // Add timestamp to prevent caching
-    const response = await axios.get(`http://localhost:5000/api/news?t=${Date.now()}`);
+    const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/news?t=${Date.now()}`);
     if (response.data.success) {
       setNews(response.data.data);
       console.log('✅ Loaded', response.data.count, 'news articles');
