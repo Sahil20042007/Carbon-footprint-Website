@@ -11,10 +11,18 @@ router.get('/', async (req, res) => {
     
     const news = await fetchClimateNews();
     
+    // Disable caching
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
+    
     res.status(200).json({
       success: true,
       count: news.length,
-      data: news
+      data: news,
+      timestamp: new Date().toISOString() // Add timestamp
     });
   } catch (error) {
     console.error('News fetch error:', error);

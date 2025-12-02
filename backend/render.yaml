@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: ecotrack-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+```
+
+---
+
+## 🎯 **Step 2: Deploy Backend to Render**
+
+### **A. Sign up for Render:**
+
+1. Go to https://render.com
+2. Click "Get Started for Free"
+3. Sign up with GitHub/Email
+
+---
+
+### **B. Create New Web Service:**
+
+1. Click "New +" → "Web Service"
+2. Connect your GitHub repository (or use "Deploy from Git")
+3. Fill in:
+   - **Name:** `ecotrack-backend`
+   - **Environment:** `Node`
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
+   - **Instance Type:** `Free`
+
+---
+
+### **C. Add Environment Variables:**
+
+In Render dashboard, go to "Environment" tab and add:
+```
+NODE_ENV=production
+PORT=5000
+MONGO_URI=your_actual_mongodb_connection_string
+JWT_SECRET=your_actual_jwt_secret
+FRONTEND_URL=https://your-app.vercel.app
+NEWS_API_KEY=your_actual_news_api_key
