@@ -5,7 +5,7 @@ import { calculationAPI } from '../utils/api';
 import ResultDashboard from '../components/ResultDashboard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import DidYouKnow from '../components/DidYouKnow';
-import Leaderboard from '../components/Leaderboard';
+import Leaderboard from '../components/LeaderBoards';
 import CarbonGoals from '../components/CarbonGoals';
 import StreakCounter from '../components/StreakCounter';
 import CarbonNews from '../components/CarbonNews';
@@ -16,6 +16,9 @@ import ParticleBackground from '../components/ParticleBackground';
 import FloatingBadges from '../components/FloatingBadges';
 import MorphingBlob from '../components/MorphingBlob';
 import { Calculator, History, TrendingUp, Sparkles, Zap, Star } from 'lucide-react';
+import AIRecommendations from '../components/AIRecommendations';
+import CarbonOffsetMarketplace from '../components/CarbonOffsetMarketPlace';
+import CommunityForum from '../components/CommunityForum';
 
 const Dashboard = () => {
   const [calculations, setCalculations] = useState([]);
@@ -200,6 +203,22 @@ const Dashboard = () => {
             <Leaderboard userFootprint={latestCalculation.results.total} />
           </div>
         )}
+        {/* AI Recommendations */}
+          {latestCalculation && (
+            <div className={`mb-8 transform transition-all duration-1000 delay-600 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+              <AIRecommendations />
+            </div>
+          )}
+          {/* Carbon Offset Marketplace */}
+            {latestCalculation && (
+              <div className={`mb-8 transform transition-all duration-1000 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                <CarbonOffsetMarketplace />
+              </div>
+            )}
+            {/* Community Forum */}
+              <div className={`mb-8 transform transition-all duration-1000 delay-800 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                <CommunityForum />
+              </div>
 
         {/* Educational Content Grid */}
         {latestCalculation && (

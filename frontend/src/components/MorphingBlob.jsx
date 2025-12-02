@@ -25,7 +25,7 @@ const MorphingBlob = ({ color = 'green', size = 'large', position = 'top-left' }
 
   return (
     <div className={`absolute ${positionClasses[position]} ${sizeClasses[size]} ${colorClasses[color]} rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-morph`}>
-      <style jsx>{`
+      <style>{`
         @keyframes morph {
           0%, 100% {
             border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;

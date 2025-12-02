@@ -3,6 +3,7 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, Resp
 import { TrendingDown, TrendingUp, Target, Lightbulb, Award, Trees, Download, Share2 } from 'lucide-react';
 import CountUp from 'react-countup';
 import confetti from 'canvas-confetti';
+import SocialShare from './SocialShare';
 
 const ResultDashboard = ({ calculation }) => {
   const [viewMode, setViewMode] = useState('monthly'); // 'monthly' or 'yearly'
@@ -273,7 +274,27 @@ Visit: https://ecotrack.com
           >
             <Download className="w-5 h-5" />
             <span>Download Report</span>
+            
           </button>
+                    <div className="flex items-center space-x-2">
+            <SocialShare calculation={calculation} />
+            
+            <button
+              onClick={shareResults}
+              className="flex items-center space-x-2 px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+            >
+              <Share2 className="w-5 h-5" />
+              <span>Share</span>
+            </button>
+            
+            <button
+              onClick={downloadPDF}
+              className="flex items-center space-x-2 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            >
+              <Download className="w-5 h-5" />
+              <span>Download Report</span>
+            </button>
+          </div>
         </div>
       </div>
 

@@ -12,20 +12,21 @@ const CarbonNews = () => {
   }, []);
 
   const fetchNews = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get('http://localhost:5000/api/news');
-      if (response.data.success) {
-        setNews(response.data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching news:', error);
-      // Use fallback news if API fails
-      setNews(getFallbackNews());
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  try {
+    // Add timestamp to prevent caching
+    const response = await axios.get(`http://localhost:5000/api/news?t=${Date.now()}`);
+    if (response.data.success) {
+      setNews(response.data.data);
+      console.log('✅ Loaded', response.data.count, 'news articles');
     }
-  };
+  } catch (error) {
+    console.error('Error fetching news:', error);
+    setNews(getFallbackNews());
+  } finally {
+    setLoading(false);
+  }
+};
 
   const getFallbackNews = () => [
     {
