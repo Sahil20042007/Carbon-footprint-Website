@@ -3,7 +3,7 @@ const router = express.Router();
 const { protect } = require('../middleware/auth');
 const OffsetProject = require('../models/OffsetProject');
 const OffsetPurchase = require('../models/OffsetPurchase');
-const Calculation = require('../models/calculation');
+const Calculation = require('../models/sahilcalculator');
 
 // @route   GET /api/offset/projects
 // @desc    Get all active offset projects

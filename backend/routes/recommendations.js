@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
-const Calculation = require('../models/calculation');
+const Calculation = require('../models/sahilcalculator');
 
 // @route   GET /api/recommendations
 // @desc    Get AI-powered recommendations based on latest calculation

@@ -15,7 +15,7 @@ const commentsRoutes = require('./routes/comments');
 dotenv.config();
 
 const authRoutes = require('./routes/auth');
-const calculationRoutes = require('./routes/calculation');
+const calculationRoutes = require('./routes/routesCalculation');
 
 
 const app = express();

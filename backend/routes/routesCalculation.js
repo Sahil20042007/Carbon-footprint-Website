@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Calculation = require('../models/calculation');
+const Calculation = require('../models/sahilcalculator');
 const { protect } = require('../middleware/auth');
 
 // Carbon Emission Factors (kg CO2)
