@@ -1,3 +1,4 @@
+// frontend/src/components/CarbonOffsetMarketPlace.jsx
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Check, Trees, Wind, Droplets, Leaf, Waves, Award, TrendingUp, Users } from 'lucide-react';
 import axios from 'axios';
@@ -13,11 +14,14 @@ const CarbonOffsetMarketplace = () => {
   useEffect(() => {
     fetchProjects();
     fetchUserFootprint();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get('/${process.env.REACT_APP_API_URL || 'http://localhost:5000'}api/offset/projects');
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/offset/projects`
+      );
       if (response.data.success) {
         setProjects(response.data.data);
       }
@@ -31,9 +35,13 @@ const CarbonOffsetMarketplace = () => {
   const fetchUserFootprint = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/offset/calculate', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/recommendations`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
       if (response.data.success) {
         setUserFootprint(response.data.data);
       }
@@ -46,24 +54,22 @@ const CarbonOffsetMarketplace = () => {
     try {
       setPurchasing(true);
       const token = localStorage.getItem('token');
-      
+
       const response = await axios.post(
-        '${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/offset/purchase',
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/offset/purchase`,
         { projectId, tonsOffset: parseFloat(tonsToOffset) },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (response.data.success) {
+      // handle response
+      if (response.data && response.data.success) {
         setPurchaseSuccess(true);
-        setTimeout(() => {
-          setPurchaseSuccess(false);
-          setSelectedProjects([]);
-          fetchProjects(); // Refresh projects to show updated stats
-        }, 3000);
+        // update local state / UI as needed
+      } else {
+        setPurchaseSuccess(false);
       }
     } catch (error) {
-      console.error('Purchase error:', error);
-      alert(error.response?.data?.message || 'Purchase failed');
+      console.error('Error making purchase:', error);
     } finally {
       setPurchasing(false);
     }

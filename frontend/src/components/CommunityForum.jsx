@@ -40,7 +40,7 @@ const CommunityForum = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        '${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/comments',
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/comments`,
         {
           content: newComment,
           category: selectedCategory === 'All' ? 'General' : selectedCategory
