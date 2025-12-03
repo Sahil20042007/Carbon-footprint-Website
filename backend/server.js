@@ -23,11 +23,20 @@ const app = express();
 // Security: Helmet
 app.use(helmet());
 
-// Security: CORS
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
-    : 'http://localhost:3000',
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://carbon-footprint-website-chi.vercel.app',
+      'https://carbon-footprint-website-chi.vercel.app/',
+      'http://localhost:3000'
+    ];
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 };
 app.use(cors(corsOptions));
