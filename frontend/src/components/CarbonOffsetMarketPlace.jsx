@@ -3,6 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Check, Trees, Wind, Droplets, Leaf, Waves, Award, TrendingUp, Users } from 'lucide-react';
 import axios from 'axios';
 
+// safe number formatter: returns formatted string or fallback
+const fmt = (v, decimals = 2, fallback = '--') => {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return fallback;
+  return n.toFixed(decimals);
+};
+
 const CarbonOffsetMarketplace = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState([]);
@@ -33,22 +40,31 @@ const CarbonOffsetMarketplace = () => {
   };
 
   const fetchUserFootprint = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/recommendations`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-
-      if (response.data.success) {
-        setUserFootprint(response.data.data);
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/recommendations`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
       }
-    } catch (error) {
-      console.error('Error fetching footprint:', error);
+    );
+
+    if (response.data && response.data.success) {
+      const payload = response.data.data || {};
+      // Normalize possible field names and ensure numeric defaults
+      const normalized = {
+        tonsToOffset: Number(payload.tonsToOffset ?? payload.tons ?? payload.offsetTons ?? 0),
+        yearlyFootprint: Number(payload.yearlyFootprint ?? payload.perYear ?? payload.annual ?? 0),
+        ...payload
+      };
+      // Helpful debug during development — remove or comment out in production
+      console.log('fetchUserFootprint normalized =', normalized);
+      setUserFootprint(normalized);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching footprint:', error);
+  }
+};
 
   const handlePurchase = async (projectId, tonsToOffset) => {
     try {
@@ -95,19 +111,24 @@ const CarbonOffsetMarketplace = () => {
   };
 
   const calculateTotal = () => {
-    if (!userFootprint) return { cost: 0, tons: 0 };
-    
-    const tonsToOffset = parseFloat(userFootprint.tonsToOffset);
-    const totalCost = selectedProjects.reduce((sum, projectId) => {
-      const project = projects.find(p => p._id === projectId);
-      return sum + (project ? project.pricePerTon * tonsToOffset : 0);
-    }, 0);
+  if (!userFootprint) return { cost: '0', tons: '0.00' };
 
-    return {
-      cost: totalCost.toFixed(0),
-      tons: (tonsToOffset * selectedProjects.length).toFixed(2)
-    };
+  const tonsToOffset = Number(userFootprint?.tonsToOffset) || 0;
+
+  const totalCost = selectedProjects.reduce((sum, projectId) => {
+    const project = projects.find(p => p._id === projectId);
+    const price = Number(project?.pricePerTon) || 0;
+    return sum + price * tonsToOffset;
+  }, 0);
+
+  return {
+    cost: fmt(totalCost, 0, '0'),
+    tons: fmt(tonsToOffset * selectedProjects.length, 2, '0.00')
   };
+};
+
+
+
 
   if (loading) {
     return (
@@ -141,7 +162,7 @@ const CarbonOffsetMarketplace = () => {
           </h2>
           {userFootprint && (
             <p className="text-gray-600">
-              Offset your <strong className="text-primary">{userFootprint.tonsToOffset} tons</strong> of CO₂ 
+              Offset your <strong className="text-primary">{fmt(userFootprint?.tonsToOffset, 2, '0')} tons</strong> of CO₂ 
               by supporting verified climate projects
             </p>
           )}
@@ -155,8 +176,10 @@ const CarbonOffsetMarketplace = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm opacity-90">Your Annual Carbon Footprint</p>
-              <p className="text-4xl font-bold">{userFootprint.tonsToOffset} tons CO₂</p>
-              <p className="text-sm opacity-90 mt-1">{userFootprint.yearlyFootprint.toFixed(0)} kg per year</p>
+              <p className="text-4xl font-bold">{fmt(userFootprint?.tonsToOffset, 2, '0')} tons CO₂</p>
+              <p className="text-sm opacity-90 mt-1">
+              {fmt(userFootprint?.yearlyFootprint, 0, '0')} kg per year</p>
+
             </div>
             <TrendingUp className="w-16 h-16 opacity-80" />
           </div>
@@ -200,9 +223,9 @@ const CarbonOffsetMarketplace = () => {
 
           <button
             onClick={() => {
-              selectedProjects.forEach(projectId => {
-                handlePurchase(projectId, userFootprint.tonsToOffset);
-              });
+                          selectedProjects.forEach(projectId => {
+              handlePurchase(projectId, Number(userFootprint?.tonsToOffset) || 0);
+            });
             }}
             disabled={purchasing}
             className="w-full py-4 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg font-bold text-lg hover:from-green-600 hover:to-teal-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
@@ -213,7 +236,7 @@ const CarbonOffsetMarketplace = () => {
                 Processing...
               </span>
             ) : (
-              `Offset ${userFootprint.tonsToOffset} Tons & Become Carbon Neutral`
+              `Offset ${fmt(userFootprint?.tonsToOffset, 2, '0')} Tons & Become Carbon Neutral`
             )}
           </button>
 
@@ -237,7 +260,9 @@ const CarbonOffsetMarketplace = () => {
 };
 
 const ProjectCard = ({ project, selected, onSelect, tonsToOffset, getIcon }) => {
-  const cost = (project.pricePerTon * tonsToOffset).toFixed(0);
+  const costValue = (Number(project?.pricePerTon) || 0) * (Number(tonsToOffset) || 0);
+const cost = fmt(costValue, 0, '0');
+
 
   return (
     <div
@@ -302,7 +327,7 @@ const ProjectCard = ({ project, selected, onSelect, tonsToOffset, getIcon }) => 
           <div>
             <p className="text-xs text-gray-500">Your cost</p>
             <p className="text-2xl font-bold text-green-600">₹{cost}</p>
-            <p className="text-xs text-gray-500">for {tonsToOffset} tons</p>
+            <p className="text-xs text-gray-500">for {fmt(tonsToOffset, 2, '0')} tons</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-gray-500">Per ton</p>
