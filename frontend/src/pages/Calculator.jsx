@@ -7,6 +7,7 @@ import StepThree from '../components/StepThree';
 import StepFour from '../components/StepFour';
 import StepFive from '../components/StepFive';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import VoiceInput from '../components/VoiceInput'; // [Check] Import exists
 
 const Calculator = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -48,6 +49,21 @@ const Calculator = () => {
     },
   });
 
+  // [NEW] Function to handle voice data
+  // This updates the specific nested field in your state
+  const handleVoiceData = (category, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [category]: {
+        ...prev[category],
+        [field]: value,
+      },
+    }));
+    
+    // Optional: Visual feedback could go here
+    console.log(`🎤 Voice updated: ${category}.${field} = ${value}`);
+  };
+
   const totalSteps = 5;
   const steps = [
     { number: 1, title: 'Transportation', component: StepOne },
@@ -74,39 +90,35 @@ const Calculator = () => {
   };
 
   const handleSubmit = async () => {
-  setLoading(true);
-  setError('');
+    setLoading(true);
+    setError('');
 
-  console.log('🚀 Starting calculation...');
-  console.log('📊 Form Data:', JSON.stringify(formData, null, 2));
+    console.log('🚀 Starting calculation...');
+    console.log('📊 Form Data:', JSON.stringify(formData, null, 2));
 
-  try {
-    const response = await calculationAPI.create(formData);
-    
-    console.log('✅ API Response:', response);
-    console.log('📈 Response Data:', response.data);
-    
-    if (response.data.success) {
-      console.log('🎉 Success! Navigating to dashboard...');
-      navigate('/dashboard', { 
-        state: { newCalculation: response.data.data } 
-      });
+    try {
+      const response = await calculationAPI.create(formData);
+      
+      console.log('✅ API Response:', response);
+      
+      if (response.data.success) {
+        console.log('🎉 Success! Navigating to dashboard...');
+        navigate('/dashboard', { 
+          state: { newCalculation: response.data.data } 
+        });
+      }
+    } catch (err) {
+      console.error('❌ Error:', err);
+      setError(err.response?.data?.message || 'Failed to calculate. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error('❌ Full Error Object:', err);
-    console.error('❌ Error Response:', err.response);
-    console.error('❌ Error Data:', err.response?.data);
-    console.error('❌ Error Status:', err.response?.status);
-    
-    setError(err.response?.data?.message || 'Failed to calculate. Please try again.');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12">
       <div className="max-w-4xl mx-auto px-4">
+        
         {/* Progress Bar */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -143,12 +155,16 @@ const Calculator = () => {
             ))}
           </div>
           
-          {/* Step Counter */}
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Step {currentStep} of {totalSteps}
             </p>
           </div>
+        </div>
+
+        {/* [NEW] Voice Input Component placed here */}
+        <div className="mb-6">
+           <VoiceInput onDataDetected={handleVoiceData} />
         </div>
 
         {/* Error Message */}
